@@ -1,0 +1,10 @@
+const SIGN_UP_TEXT = 'Sign up to organize your wardrobe better';
+const GOOGLE_LOGIN_TEXT = 'Log in with Google';
+const APPLE_LOGIN_TEXT = 'Log in with Apple';
+const OR_TEXT = 'OR';
+const EMAIL_PLACEHOLDER = 'Email';
+const PASSWORD_PLACEHOLDER = 'Password';
+const CONFIRM_PASSWORD_PLACEHOLDER = 'Confirm password';
+const TERMS_TEXT = 'By signing up, you agree to our';
+const TERMS_LINK_TEXT = 'Terms, Data Policy and Cookies Policy. Learn more';
+const SIGN_UP_BUTTON_TEXT = 'Sign up';
