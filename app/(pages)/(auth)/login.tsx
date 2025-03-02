@@ -8,12 +8,17 @@ import AppLogin from './components/AppLogin'
 import LoginForm from './components/LoginForm'
 import HeadingText from '@/components/HeadingText'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { SIGN_UP_LINK } from '@/constants/routes'
+import { useForm } from 'react-hook-form'
 
 export type RootStackParamList = {
-    Home: undefined;  // інші екрани, наприклад Home
-    signup: undefined;  // ваш екран Signup
+    Home: undefined;  
+    signup: undefined; 
   };
+
+  interface FormData {
+    email: string;
+    password: string;
+  }
 
 
 export default function LoginPage() {
@@ -22,14 +27,12 @@ export default function LoginPage() {
     const handleSignupPress = () => {
         navigation.navigate('signup');  
     };
-
     return (
         <ThemedView style={styles.titleContainer}>
             <HeadingText text={SIGN_UP_TEXT} />
             <ThemedView style={styles.buttons}>
                 <AppLogin />
                 <DecoratedText text={OR_TEXT} />
-                <LoginForm />
                 <ButtonWithBackground
                     text={LOGIN_BUTTON_TEXT}
                     onPress={() => console.log(LOGIN_BUTTON_TEXT)}
