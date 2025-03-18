@@ -6,12 +6,23 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useFonts, PTSerif_400Regular, PTSerif_700Bold } from '@expo-google-fonts/pt-serif';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch} from 'react-redux';
 import { store } from '@/api/store';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setToken } from '@/api/authSlice';
+
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  return (
+      <Provider store={store}>
+        <RootLayoutContent />
+      </Provider>
+  );
+}
+
+function RootLayoutContent() {
   const colorScheme = useColorScheme();
 
   const [fontsLoaded] = useFonts({
@@ -19,18 +30,28 @@ export default function RootLayout() {
     PTSerif_700Bold,
   });
 
+  const dispatch = useDispatch(); // Тепер викликається всередині Provider
+
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+
+    const loadStoredToken = async () => {
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedToken) {
+        dispatch(setToken(storedToken));
+      }
+    };
+
+    loadStoredToken();
+  }, [fontsLoaded, dispatch]);
 
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <Provider store={store}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -38,6 +59,5 @@ export default function RootLayout() {
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
-    </Provider>
   );
 }

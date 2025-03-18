@@ -5,9 +5,11 @@ import {
   combineReducers,
 } from '@reduxjs/toolkit';
 import { loginAPI } from './services/Login';
+import authReducer from './authSlice'; // Імпортуємо authSlice
 
 const rootReducer = combineReducers({
   [loginAPI.reducerPath]: loginAPI.reducer,
+  auth: authReducer,
 });
 
 export const store = configureStore({

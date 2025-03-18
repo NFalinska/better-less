@@ -1,12 +1,12 @@
 import React from 'react'
-import { SIGN_UP, SLOGAN, TERMS_LINK_TEXT, TERMS_TEXT, WELCOME } from '@/constants/string'
+import {SIGN_UP, SLOGAN, TERMS_LINK_TEXT, TERMS_TEXT, WELCOME} from '@/constants/string'
 import HeadingText from '@/components/HeadingText'
 import LoginForm from './components/LoginForm'
-import { ThemedText } from '@/components/ThemedText'
-import { ButtonWithBackground } from '@/components/ButtonWithBgn'
-import { Text, StyleSheet, Alert } from 'react-native'
-import { loginAPI } from '@/api/services/Login'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import {ThemedText} from '@/components/ThemedText'
+import {ButtonWithBackground} from '@/components/ButtonWithBgn'
+import {Text, StyleSheet, Alert} from 'react-native'
+import {loginAPI} from '@/api/services/Login'
+import {SubmitHandler, useForm} from 'react-hook-form'
 
 type FormData = {
     email: string;
@@ -15,47 +15,53 @@ type FormData = {
 };
 
 export default function SignupPage() {
-    const [signup, { isError, error, isSuccess }] = loginAPI.useSignupMutation();
-    const { control, handleSubmit, getValues, formState: { errors } } = useForm<FormData>();
-
+    const [signup, {isError, error, isSuccess}] = loginAPI.useSignupMutation();
+    const {control, handleSubmit, getValues, formState: {errors}, setError} = useForm<FormData>();
 
     const onSubmitForm: SubmitHandler<FormData> = async (data: FormData) => {
-        try {
-            const response = await signup({ email: data.email, password: data.password });
-            if (response.data) {
-
-                Alert.alert('Success', 'Registration successful');
-            } else if (response.error) {
-                if ('status' in response.error) {
-                    switch (response.error.status) {
-                        case 404:
-                            Alert.alert('Error', 'Not found');
-                            break;
-                        case 500:
-                            Alert.alert('Error', 'Internal server error');
-                            break;
-                        default:
-                            Alert.alert('Error', 'Something went wrong');
+            try {
+                const response = await signup({email: data.email, password: data.password});
+                if (response.data) {
+                    if (response.data.errors) {
+                        if (response.data.errors.email) {
+                            setError("email", { type: "server", message: response.data.errors.email });
+                        }
+                        if (response.data.errors.password) {
+                            setError("password", { type: "server", message: response.data.errors.password });
+                        }
                     }
-                } else if ('message' in response.error) {
-                    Alert.alert('Error', response.error.message || 'Unexpected error');
+                    Alert.alert('Success', 'Registration successful');
+                } else if (response.error) {
+                    if ('status' in response.error) {
+                        switch (response.error.status) {
+                            case 404:
+                                Alert.alert('Error', 'Not found');
+                                break;
+                            case 500:
+                                Alert.alert('Error', 'Internal server error');
+                                break;
+                            default:
+                                Alert.alert('Error', 'Something went wrong');
+                        }
+                    } else if ('message' in response.error) {
+                        Alert.alert('Error', response.error.message || 'Unexpected error');
+                    } else {
+                        Alert.alert('Error', 'Unexpected error');
+                    }
                 } else {
-                    Alert.alert('Error', 'Unexpected error');
+                    Alert.alert('Error', 'Unexpected error.');
                 }
-            } else {
+            } catch
+                (error) {
                 Alert.alert('Error', 'Unexpected error.');
             }
-        } catch (error) {
-            Alert.alert('Error', 'Unexpected error.');
-        }
-    };
-    
+        };
 
 
     return (
         <>
-            <HeadingText text={WELCOME} underlineText fontSize={20} marginBottom={30} />
-            <HeadingText text={SLOGAN} />
+            <HeadingText text={WELCOME} underlineText fontSize={20} marginBottom={30}/>
+            <HeadingText text={SLOGAN}/>
             <LoginForm
                 signupForm={true}
                 control={control}
